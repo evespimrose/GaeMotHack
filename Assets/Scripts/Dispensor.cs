@@ -1,18 +1,18 @@
-using System.Collections;
-using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
 
-public class Dispensor : MonoBehaviour
+public class ProjectileTracker : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public Launcher launcher; // Launcher 스크립트 참조
 
-    // Update is called once per frame
-    void Update()
+    void OnCollisionEnter2D(Collision2D collision)
     {
-        
+        Debug.Log("착지! 위치: " + transform.position);
+
+        // Launcher 스크립트에 착지 위치 전달
+        launcher.UpdateLaunchPoint(transform);
+
+        // 착지 후 ProjectileTracker 제거 (선택 사항)
+        Destroy(this);
     }
 }
