@@ -1,10 +1,13 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(AimInputHandler))]
 public class DefaultLauncher : LauncherBase, IAimInputHandler
 {
     [SerializeField] private GameObject ballPrefab;
     [SerializeField] private float maxPreviewDistance = 3f; // 조준 중 최대 미리보기 거리
+    [SerializeField] private Scrollbar powerGauge;
+    [SerializeField] private float currentPower;
 
     private Vector2 startPosition;
     private GameObject previewBallInstance;
@@ -18,10 +21,20 @@ public class DefaultLauncher : LauncherBase, IAimInputHandler
             Debug.LogError("AimInputHandler가 필요합니다.");
     }
 
-    private void Start()
+    protected override void Start()
     {
         base.Start();
     }
+
+    private void Update()
+    {
+        // currentPower가 바뀔 때마다 Scrollbar 값 반영 (0 ~ 1 사이)
+        if (powerGauge != null)
+        {
+            powerGauge.value = Mathf.Clamp01(currentPower);
+        }
+    }
+
 
     public void OnStartAiming(Vector2 position)
     {

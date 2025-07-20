@@ -6,6 +6,7 @@ public abstract class LauncherBase : MonoBehaviour
     [SerializeField] protected Transform initialLaunchPoint;
     [SerializeField] protected float launchForceMultiplier = 10f;
     [SerializeField] protected float maxLaunchForce = 10f;
+    protected float currentLaunchForce = 0f;
 
     protected Transform currentLaunchPoint;
 
