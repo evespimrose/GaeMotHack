@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using UnityEngine;
 
 public class AimInputHandler : MonoBehaviour
@@ -10,6 +9,8 @@ public class AimInputHandler : MonoBehaviour
     // 파워 조절 관련 변수
     private float power = 0f;
     private bool powerIncreasing = true;
+    private bool hasReachedMax = false; // 최대값 도달 여부
+    private bool hasReachedMin = false; // 최소값 도달 여부
 
     // 각도 조절 관련 변수
     private float angle = 0f;
@@ -47,6 +48,8 @@ public class AimInputHandler : MonoBehaviour
             {
                 currentControlState = ControlState.Power;
                 handler.OnStartPowerHandling(); // 파워 조절 시작
+                hasReachedMax = false; // 초기화
+                hasReachedMin = false; // 초기화
             }
         }
 
@@ -62,15 +65,19 @@ public class AimInputHandler : MonoBehaviour
             }
         }
 
+        // 게이지 바가 1회 왕복을 마치면 최소 파워로 설정
+        if (currentControlState == ControlState.Power && hasReachedMax && hasReachedMin)
+        {
+            float finalPower = minimumPower; // 최소 파워로 설정
+            handler.OnEndPowerHandling(finalPower); // 파워 조절 종료
+            ResetControlState(); // 상태 초기화
+        }
+
         if (Input.GetKeyUp(KeyCode.Space))
         {
             if (currentControlState == ControlState.Power)
             {
                 float finalPower = power;
-                if (powerIncreasing)
-                {
-                    finalPower = minimumPower; //최소 파워로 초기화
-                }
                 handler.OnEndPowerHandling(finalPower); // 파워 조절 종료
                 ResetControlState(); // 상태 초기화
             }
@@ -90,6 +97,7 @@ public class AimInputHandler : MonoBehaviour
             {
                 power = 1f;
                 powerIncreasing = false;
+                hasReachedMax = true; // 최대값 도달
             }
         }
         else
@@ -99,6 +107,7 @@ public class AimInputHandler : MonoBehaviour
             {
                 power = 0f;
                 powerIncreasing = true;
+                hasReachedMin = true; // 최소값 도달
             }
         }
         power = Mathf.Clamp01(power); // 0과 1 사이로 제한
@@ -133,6 +142,8 @@ public class AimInputHandler : MonoBehaviour
         currentControlState = ControlState.None;
         power = 0f;
         powerIncreasing = true;
+        hasReachedMax = false;
+        hasReachedMin = false;
         angle = 0f;
         angleIncreasing = true;
     }
@@ -144,7 +155,7 @@ public class AimInputHandler : MonoBehaviour
 
     public float GetAngle()
     {
-        return angle;
+        return angle * 180f;
     }
 
     public string GetCurrentControlState()

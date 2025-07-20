@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using UnityEngine;
 
 public abstract class LauncherBase : MonoBehaviour
@@ -7,7 +6,6 @@ public abstract class LauncherBase : MonoBehaviour
     [SerializeField] protected Transform initialLaunchPoint;
     [SerializeField] protected float launchForceMultiplier = 10f;
     [SerializeField] protected float maxLaunchForce = 10f;
-    protected float currentLaunchForce = 0f;
 
     protected Transform currentLaunchPoint;
 
@@ -22,7 +20,7 @@ public abstract class LauncherBase : MonoBehaviour
     /// <summary>
     /// 런처에서 실제로 발사하는 기능. 상속한 클래스에서 구현
     /// </summary>
-    public abstract void LaunchBall(Vector2 direction, float normalizedPower);
+    public abstract void LaunchBall(float angle);
 
     /// <summary>
     /// 런치 포인트 위치 갱신
