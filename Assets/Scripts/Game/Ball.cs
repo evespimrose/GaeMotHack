@@ -1,0 +1,41 @@
+using UnityEngine;
+
+[RequireComponent(typeof(Rigidbody2D))]
+public class Ball : MonoBehaviour
+{
+    private Rigidbody2D rb;
+
+    private void Awake()
+    {
+        rb = GetComponent<Rigidbody2D>();
+    }
+
+    /// <summary>
+    /// 공을 주어진 방향과 힘으로 발사합니다.
+    /// </summary>
+    public void Launch(Vector2 direction, float power)
+    {
+        rb.velocity = Vector2.zero; // 기존 속도 초기화
+        rb.AddForce(direction.normalized * power, ForceMode2D.Impulse);
+    }
+
+    /// <summary>
+    /// 발사대가 제공하는 효과를 적용합니다.
+    /// </summary>
+    public void ApplyEffect(ILauncherEffect effect)
+    {
+        effect?.ApplyEffect(rb);
+    }
+
+    /// <summary>
+    /// 골에 도달했는지 체크하는 예시 Trigger
+    /// </summary>
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Goal"))
+        {
+            Debug.Log("🎉 Goal Reached!");
+            // GameManager.Instance.LevelComplete(); 등과 연동
+        }
+    }
+}
