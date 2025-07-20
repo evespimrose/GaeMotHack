@@ -21,11 +21,17 @@ public class DefaultLauncher : LauncherBase, IAimInputHandler
     // IAimInputHandler 인터페이스 구현
     private void Update()
     {
+        if (GetPowerHandlingState() && inputHandler != null)
+        {
+            currentPower = inputHandler.GetPower();
+        }
+
         // currentPower가 바뀔 때마다 Scrollbar 값 반영 (0 ~ 1 사이)
         if (powerGauge != null)
         {
             powerGauge.value = Mathf.Clamp01(currentPower);
         }
+
     }
     // IAimInputHandler 구현부
     public void OnStartAiming(Vector2 position)
