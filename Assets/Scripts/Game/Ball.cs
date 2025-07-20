@@ -15,7 +15,7 @@ public class Ball : MonoBehaviour
     /// </summary>
     public void Launch(Vector2 direction, float power)
     {
-        rb.velocity = Vector2.zero; // 기존 속도 초기화
+        rb.linearVelocity = Vector2.zero; // 기존 속도 초기화
         rb.AddForce(direction.normalized * power, ForceMode2D.Impulse);
     }
 
@@ -39,3 +39,4 @@ public class Ball : MonoBehaviour
         }
     }
 }
+

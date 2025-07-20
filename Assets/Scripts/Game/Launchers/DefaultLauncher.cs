@@ -1,83 +1,91 @@
+using System.Diagnostics;
 using UnityEngine;
 
 [RequireComponent(typeof(AimInputHandler))]
 public class DefaultLauncher : LauncherBase, IAimInputHandler
 {
     [SerializeField] private GameObject ballPrefab;
-    [SerializeField] private float maxPreviewDistance = 3f; // 조준 중 최대 미리보기 거리
-
-    private Vector2 startPosition;
-    private GameObject previewBallInstance;
 
     private AimInputHandler inputHandler;
+    private float currentPower;
 
-    private void Awake()
+    protected override void Start() // override 키워드 추가
     {
         inputHandler = GetComponent<AimInputHandler>();
         if (inputHandler == null)
-            Debug.LogError("AimInputHandler가 필요합니다.");
+            UnityEngine.Debug.LogError("AimInputHandler가 필요합니다."); // UnityEngine.Debug 명시
+
+        currentLaunchPoint = initialLaunchPoint;
     }
 
-    private void Start()
-    {
-        base.Start();
-    }
-
+    // IAimInputHandler 인터페이스 구현
     public void OnStartAiming(Vector2 position)
     {
-        startPosition = position;
-
-        // 조준용 공 생성
-        if (previewBallInstance == null)
-        {
-            previewBallInstance = Instantiate(ballPrefab, currentLaunchPoint.position, Quaternion.identity);
-            Rigidbody2D rb = previewBallInstance.GetComponent<Rigidbody2D>();
-            if (rb != null) rb.isKinematic = true;
-        }
-    }
-
-    public void OnUpdateAiming(Vector2 currentPosition)
-    {
-        if (previewBallInstance == null) return;
-
-        Vector2 aimVector = startPosition - currentPosition;
-        float clampedMagnitude = Mathf.Min(aimVector.magnitude, maxPreviewDistance);
-
-        Vector2 clampedVector = aimVector.normalized * clampedMagnitude;
-        Vector2 ballPosition = startPosition - clampedVector;
-
-        previewBallInstance.transform.position = ballPosition;
+        // 각도 조절 시작 시 호출
+        SetAngleHandlingState(true);
+        UnityEngine.Debug.Log("각도 조절 시작");
     }
 
     public void OnEndAiming(Vector2 position)
     {
-        Vector2 launchVector = startPosition - position;
-        float forceMagnitude = Mathf.Clamp(launchVector.magnitude, 0, maxLaunchForce);
-        float normalizedForce = forceMagnitude / maxLaunchForce;
-        Vector2 direction = launchVector.normalized;
+        // 각도 조절 종료 시 호출
+        SetAngleHandlingState(false);
+        float angle = position.x; // AimInputHandler에서 angle 값을 넘겨주도록 수정
+        UnityEngine.Debug.Log("각도 조절 종료, 각도: " + angle);
+    }
 
-        // 발사
-        LaunchBall(direction, normalizedForce);
+    public void OnStartPowerHandling()
+    {
+        // 파워 조절 시작 시 호출
+        SetPowerHandlingState(true);
+        UnityEngine.Debug.Log("파워 조절 시작");
+    }
 
-        // 미리보기 공 제거
-        if (previewBallInstance != null)
+    public void OnEndPowerHandling(float power)
+    {
+        // 파워 조절 종료 시 호출
+        SetPowerHandlingState(false);
+        currentPower = power;
+
+        UnityEngine.Debug.Log("파워 조절 종료, 파워: " + currentPower);
+        //모든 조절이 끝났으면 발사
+        if (!GetAngleHandlingState())
         {
-            Destroy(previewBallInstance);
-            previewBallInstance = null;
+            LaunchBall();
         }
     }
 
+    // LauncherBase 추상 메서드 구현
     public override void LaunchBall(Vector2 direction, float normalizedPower)
     {
+        // 사용하지 않음
+    }
+
+    // 모든 조절이 끝났을 때 호출되는 발사 메서드
+    private void LaunchBall()
+    {
+        //AimInputHandler에서 Angle 값 가져오기
+        float angle = inputHandler.GetAngle();
+
+        // 정규화된 파워를 사용
         GameObject instance = Instantiate(ballPrefab, currentLaunchPoint.position, Quaternion.identity);
 
         Ball ball = instance.GetComponent<Ball>();
         if (ball == null)
         {
-            Debug.LogError("Ball prefab에 Ball 컴포넌트가 없습니다.");
+            UnityEngine.Debug.LogError("Ball prefab에 Ball 컴포넌트가 없습니다.");
             return;
         }
 
-        ball.Launch(direction, normalizedPower * launchForceMultiplier);
+        // 각도를 0~180도로 변환
+        float launchAngle = angle * 180f;
+
+        // 발사 방향 계산 (2D)
+        Vector2 launchDirection = new Vector2(Mathf.Cos(launchAngle * Mathf.Deg2Rad), Mathf.Sin(launchAngle * Mathf.Deg2Rad));
+
+        // Ball 컴포넌트의 Launch 메서드 호출
+        ball.Launch(launchDirection, currentPower * launchForceMultiplier);
+
+        UnityEngine.Debug.Log("발사! 방향: " + launchDirection + ", 파워: " + currentPower);
     }
 }
