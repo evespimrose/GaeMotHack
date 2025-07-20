@@ -10,7 +10,7 @@ public class Ball : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         if (rb == null)
         {
-            UnityEngine.Debug.LogError("Ball 오브젝트에 Rigidbody2D 컴포넌트가 없습니다.");
+            Debug.LogError("Ball 오브젝트에 Rigidbody2D 컴포넌트가 없습니다.");
         }
     }
 
@@ -19,7 +19,7 @@ public class Ball : MonoBehaviour
     /// </summary>
     public void Launch(Vector2 direction, float power)
     {
-        rb.linearVelocity = Vector2.zero; // 기존 속도 초기화
+        rb.velocity = Vector2.zero; // 기존 속도 초기화
         rb.AddForce(direction.normalized * power, ForceMode2D.Impulse);
     }
 
@@ -38,7 +38,7 @@ public class Ball : MonoBehaviour
     {
         if (other.CompareTag("Goal"))
         {
-            UnityEngine.Debug.Log("🎉 Goal Reached!");
+            Debug.Log("🎉 Goal Reached!");
             // GameManager.Instance.LevelComplete(); 등과 연동
         }
     }
