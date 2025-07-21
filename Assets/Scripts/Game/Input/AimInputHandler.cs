@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using UnityEngine;
 
 public class AimInputHandler : MonoBehaviour
@@ -6,15 +7,19 @@ public class AimInputHandler : MonoBehaviour
     private enum ControlState { Power, Angle, None }
     private ControlState currentControlState = ControlState.None;
 
-    // 파워 조절 관련 변수
+    // 파워 관련 변수
     private float power = 0f;
     private bool powerIncreasing = true;
-    private bool hasReachedMax = false; // 최대값 도달 여부
-    private bool hasReachedMin = false; // 최소값 도달 여부
+    private bool hasReachedMax = false;
+    private bool hasReachedMin = false;
 
-    // 각도 조절 관련 변수
+    // 각도 관련 변수
     private float angle = 0f;
     private bool angleIncreasing = true;
+
+    [Header("Control Speeds")]
+    [SerializeField] private float aimSpeed = 120f;    // 초당 120도 (Inspector/코드 모두에서 제어)
+    [SerializeField] private float powerSpeed = 1f;    // 초당 1.0 (Inspector/코드 모두에서 제어)
 
     [Header("Power Range")]
     [Range(0f, 0.5f)] public float badRangeMin = 0f;
@@ -48,8 +53,8 @@ public class AimInputHandler : MonoBehaviour
             {
                 currentControlState = ControlState.Power;
                 handler.OnStartPowerHandling(); // 파워 조절 시작
-                hasReachedMax = false; // 초기화
-                hasReachedMin = false; // 초기화
+                hasReachedMax = false;
+                hasReachedMin = false;
             }
         }
 
@@ -57,20 +62,19 @@ public class AimInputHandler : MonoBehaviour
         {
             if (currentControlState == ControlState.Power)
             {
-                UpdatePower(); // 파워 업데이트
+                UpdatePower();
             }
             else if (currentControlState == ControlState.Angle)
             {
-                UpdateAngle(); // 각도 업데이트
+                UpdateAngle();
             }
         }
 
-        // 게이지 바가 1회 왕복을 마치면 최소 파워로 설정
         if (currentControlState == ControlState.Power && hasReachedMax && hasReachedMin)
         {
-            float finalPower = minimumPower; // 최소 파워로 설정
-            handler.OnEndPowerHandling(finalPower); // 파워 조절 종료
-            ResetControlState(); // 상태 초기화
+            float finalPower = minimumPower;
+            handler.OnEndPowerHandling(finalPower);
+            ResetControlState();
         }
 
         if (Input.GetKeyUp(KeyCode.Space))
@@ -78,65 +82,68 @@ public class AimInputHandler : MonoBehaviour
             if (currentControlState == ControlState.Power)
             {
                 float finalPower = power;
-                handler.OnEndPowerHandling(finalPower); // 파워 조절 종료
-                ResetControlState(); // 상태 초기화
+                handler.OnEndPowerHandling(finalPower);
+                ResetControlState();
             }
             else if (currentControlState == ControlState.Angle)
             {
-                handler.OnEndAiming(new Vector2(angle, 0)); // 각도 조절 종료 (각도 전달)
+                handler.OnEndAiming(new Vector2(angle, 0));
             }
         }
     }
 
-    void UpdatePower()
-    {
-        if (powerIncreasing)
-        {
-            power += Time.deltaTime;
-            if (power >= 1f)
-            {
-                power = 1f;
-                powerIncreasing = false;
-                hasReachedMax = true; // 최대값 도달
-            }
-        }
-        else
-        {
-            power -= Time.deltaTime;
-            if (power <= 0f)
-            {
-                power = 0f;
-                powerIncreasing = true;
-                hasReachedMin = true; // 최소값 도달
-            }
-        }
-        power = Mathf.Clamp01(power); // 0과 1 사이로 제한
-    }
-
+    // 각도 조절(aim) 속도 적용
     void UpdateAngle()
     {
+        float delta = aimSpeed * Time.deltaTime;
         if (angleIncreasing)
         {
-            angle += Time.deltaTime;
-            if (angle >= 1f)
+            angle += delta;
+            if (angle >= 180f)
             {
-                angle = 1f;
+                angle = 180f;
                 angleIncreasing = false;
             }
         }
         else
         {
-            angle -= Time.deltaTime;
+            angle -= delta;
             if (angle <= 0f)
             {
                 angle = 0f;
                 angleIncreasing = true;
             }
         }
-        angle = Mathf.Clamp01(angle); // 0과 1 사이로 제한
+        angle = Mathf.Clamp(angle, 0f, 180f); // 0~180도 제한
     }
 
-    // 상태 초기화
+    // 파워(power) 게이지 속도 적용
+    void UpdatePower()
+    {
+        float delta = powerSpeed * Time.deltaTime;
+        if (powerIncreasing)
+        {
+            power += delta;
+            if (power >= 1f)
+            {
+                power = 1f;
+                powerIncreasing = false;
+                hasReachedMax = true;
+            }
+        }
+        else
+        {
+            power -= delta;
+            if (power <= 0f)
+            {
+                power = 0f;
+                powerIncreasing = true;
+                hasReachedMin = true;
+            }
+        }
+        power = Mathf.Clamp01(power);
+    }
+
     void ResetControlState()
     {
         currentControlState = ControlState.None;
@@ -148,18 +155,32 @@ public class AimInputHandler : MonoBehaviour
         angleIncreasing = true;
     }
 
-    public float GetPower()
+
+    // ⭐️ 외부에서 호출 가능한 public Setter 함수
+    public void SetAimSpeed(float newSpeed)
     {
-        return power;
+        aimSpeed = newSpeed;
+    }
+    public void SetPowerSpeed(float newSpeed)
+    {
+        powerSpeed = newSpeed;
     }
 
-    public float GetAngle()
-    {
-        return angle * 180f;
-    }
 
-    public string GetCurrentControlState()
-    {
-        return currentControlState.ToString();
-    }
+    // ⭐️ 프로퍼티 형태 사용 (혹시 몰라서 추가 해뒀음)
+    //public float AimSpeed
+    //{
+    //    get => aimSpeed;
+    //    set => aimSpeed = value;
+    //}
+    //public float PowerSpeed
+    //{
+    //    get => powerSpeed;
+    //    set => powerSpeed = value;
+    //}
+
+    // 외부에서 값 읽기용
+    public float GetPower() => power;
+    public float GetAngle() => angle;
+    public string GetCurrentControlState() => currentControlState.ToString();
 }
