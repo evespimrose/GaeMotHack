@@ -34,6 +34,11 @@ public class DefaultLauncher : LauncherBase, IAimInputHandler
             powerGauge.value = Mathf.Clamp01(currentPower);
         }
 
+        if (GetAngleHandlingState() && inputHandler != null)
+        {
+            currentAimAngle = inputHandler.GetAngle();
+        }
+
         if (aimPanel != null)
         {
             aimPanel.transform.rotation = Quaternion.Euler(0f, 0f, currentAimAngle);
