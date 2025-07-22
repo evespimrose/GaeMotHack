@@ -1,33 +1,44 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Events;
 
-public class GameManager : Singleton<GameManager>
+// 싱글턴 구조 예시 (최소 구현)
+public class GameManager : MonoBehaviour
 {
-    // 1. 공이 골에 들어간 뒤의 게임 종료 C# 이벤트
+    public static GameManager Instance { get; private set; }
+
+    // 1. 골 도달 이벤트
     public event System.Action GameEnded;
 
-    // 2. 골프의 "포어" 연출을 위한 메테오 발생 C# 이벤트
-    public event System.Action MeteorOccurred;
+    // 2. Meteor(유성) 발생 이벤트
+    public event System.Action<Vector3> MeteorOccurred; // <--- Meteor 생성 위치 등 전달 가능
 
-    // 게임 종료 이벤트를 호출하는 public 함수
+    private void Awake()
+    {
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
+    }
+
+    // 게임 종료 이벤트 호출
     public void InvokeGameEnd()
     {
         GameEnded?.Invoke();
     }
 
-    // 메테오 이벤트를 호출하는 public 함수
-    public void InvokeMeteor()
+    // Meteo 이벤트 호출, 호출 위치로부터 발사
+    public void InvokeMeteor(Vector3 targetPos)
     {
-        MeteorOccurred?.Invoke();
+        MeteorOccurred?.Invoke(targetPos);
     }
 
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.M))
         {
-            InvokeMeteor();
+            // 예시: Launcher 위치로 떨어트림
+            var launcher = FindObjectOfType<LauncherBase>();
+            if (launcher != null)
+                InvokeMeteor(launcher.transform.position);
         }
     }
 }

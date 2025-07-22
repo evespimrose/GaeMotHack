@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using UnityEngine;
 
 public abstract class LauncherBase : MonoBehaviour
@@ -9,47 +10,42 @@ public abstract class LauncherBase : MonoBehaviour
 
     protected Transform currentLaunchPoint;
 
-    protected bool isPowerHandling = false; // 파워 조절 상태
-    protected bool isAngleHandling = false; // 각도 조절 상태
+    // 조준(각도) 및 파워 조절 상태 플래그
+    protected bool isPowerHandling = false;
+    protected bool isAngleHandling = false;
 
     protected virtual void Start()
     {
         currentLaunchPoint = initialLaunchPoint;
     }
 
-    /// <summary>
-    /// 런처에서 실제로 발사하는 기능. 상속한 클래스에서 구현
-    /// </summary>
+    // 상태 쿼리 함수
+    public bool IsPowerHandlingOnly() => isPowerHandling && !isAngleHandling;
+    public bool IsAngleHandlingOnly() => isAngleHandling && !isPowerHandling;
+    public bool IsIdleState() => !isAngleHandling && !isPowerHandling;
+
+    public void SetPowerHandlingState(bool state) { isPowerHandling = state; }
+    public bool GetPowerHandlingState() { return isPowerHandling; }
+
+    public void SetAngleHandlingState(bool state) { isAngleHandling = state; }
+    public bool GetAngleHandlingState() { return isAngleHandling; }
+
+    // Meteor 충돌 시 기절 및 강제발사 처리
+    public virtual void StunAndForceShoot(Vector2 direction, float minPower)
+    {
+        LaunchBallByVector(direction, minPower);
+    }
+    public virtual void LaunchBallByVector(Vector2 direction, float power)
+    {
+        UnityEngine.Debug.Log($"[Meteor 강제발사] 방향: {direction}, 파워: {power}");
+        // 실제 발사는 DefaultLauncher에서 구현
+    }
+
     public abstract void LaunchBall(float angle);
 
-    /// <summary>
-    /// 런치 포인트 위치 갱신
-    /// </summary>
     public virtual void UpdateLaunchPoint(Transform newLaunchPoint)
     {
         currentLaunchPoint = newLaunchPoint;
         UnityEngine.Debug.Log("Launch point updated: " + currentLaunchPoint.position);
-    }
-
-    // 파워 조절 상태 설정
-    public void SetPowerHandlingState(bool state)
-    {
-        isPowerHandling = state;
-    }
-
-    // 각도 조절 상태 설정
-    public void SetAngleHandlingState(bool state)
-    {
-        isAngleHandling = state;
-    }
-
-    public bool GetPowerHandlingState()
-    {
-        return isPowerHandling;
-    }
-
-    public bool GetAngleHandlingState()
-    {
-        return isAngleHandling;
     }
 }
