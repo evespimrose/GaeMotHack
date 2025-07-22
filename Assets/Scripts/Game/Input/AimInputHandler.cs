@@ -8,6 +8,9 @@ public class AimInputHandler : MonoBehaviour
     private ControlState currentControlState = ControlState.None;
 
     // 파워 관련 변수
+    [Header("Power Range")]
+    [SerializeField] private float powerMin = 0f;
+    [SerializeField] private float powerMax = 1f;
     private float power = 0f;
     private bool powerIncreasing = true;
     private bool hasReachedMax = false;
@@ -18,15 +21,15 @@ public class AimInputHandler : MonoBehaviour
     private bool angleIncreasing = true;
 
     [Header("Control Speeds")]
-    [SerializeField] private float aimSpeed = 120f;    // 초당 120도 (Inspector/코드 모두에서 제어)
-    [SerializeField] private float powerSpeed = 1f;    // 초당 1.0 (Inspector/코드 모두에서 제어)
+    [SerializeField] private float aimSpeed = 120f;    // 초당 120도
+    [SerializeField] private float powerSpeed = 1f;    // 초당 1.0
 
-    [Header("Power Range")]
+    [Header("Power Zones")]
     [Range(0f, 0.5f)] public float badRangeMin = 0f;
     [Range(0f, 0.5f)] public float badRangeMax = 0.3f;
     [Range(0f, 0.5f)] public float goodRangeMin = 0.5f;
     [Range(0f, 0.5f)] public float goodRangeMax = 0.6f;
-    [Range(0f, 1f)] public float minimumPower = 0.1f;
+    [Range(0f, 1f)] public float minimumPower = 0.1f; // 사용 안 할 경우 제거 가능
 
     void Awake()
     {
@@ -47,12 +50,12 @@ public class AimInputHandler : MonoBehaviour
             if (currentControlState == ControlState.None)
             {
                 currentControlState = ControlState.Angle;
-                handler.OnStartAiming(Vector2.zero); // 각도 조절 시작
+                handler.OnStartAiming(Vector2.zero);
             }
             else if (currentControlState == ControlState.Angle)
             {
                 currentControlState = ControlState.Power;
-                handler.OnStartPowerHandling(); // 파워 조절 시작
+                handler.OnStartPowerHandling();
                 hasReachedMax = false;
                 hasReachedMin = false;
             }
@@ -72,7 +75,7 @@ public class AimInputHandler : MonoBehaviour
 
         if (currentControlState == ControlState.Power && hasReachedMax && hasReachedMin)
         {
-            float finalPower = minimumPower;
+            float finalPower = powerMin;
             handler.OnEndPowerHandling(finalPower);
             ResetControlState();
         }
@@ -114,19 +117,19 @@ public class AimInputHandler : MonoBehaviour
                 angleIncreasing = true;
             }
         }
-        angle = Mathf.Clamp(angle, 0f, 180f); // 0~180도 제한
+        angle = Mathf.Clamp(angle, 0f, 180f);
     }
 
-    // 파워(power) 게이지 속도 적용
+    // 파워(power) 게이지 속도 적용 (PowerMin/PowerMax 반영)
     void UpdatePower()
     {
         float delta = powerSpeed * Time.deltaTime;
         if (powerIncreasing)
         {
             power += delta;
-            if (power >= 1f)
+            if (power >= powerMax)
             {
-                power = 1f;
+                power = powerMax;
                 powerIncreasing = false;
                 hasReachedMax = true;
             }
@@ -134,20 +137,20 @@ public class AimInputHandler : MonoBehaviour
         else
         {
             power -= delta;
-            if (power <= 0f)
+            if (power <= powerMin)
             {
-                power = 0f;
+                power = powerMin;
                 powerIncreasing = true;
                 hasReachedMin = true;
             }
         }
-        power = Mathf.Clamp01(power);
+        power = Mathf.Clamp(power, powerMin, powerMax);
     }
 
     void ResetControlState()
     {
         currentControlState = ControlState.None;
-        power = 0f;
+        power = powerMin; // 항상 최소값에서 시작
         powerIncreasing = true;
         hasReachedMax = false;
         hasReachedMin = false;
@@ -155,8 +158,7 @@ public class AimInputHandler : MonoBehaviour
         angleIncreasing = true;
     }
 
-
-    // ⭐️ 외부에서 호출 가능한 public Setter 함수
+    // 외부에서 호출 가능한 public Setter 함수
     public void SetAimSpeed(float newSpeed)
     {
         aimSpeed = newSpeed;
@@ -166,21 +168,11 @@ public class AimInputHandler : MonoBehaviour
         powerSpeed = newSpeed;
     }
 
-
-    // ⭐️ 프로퍼티 형태 사용 (혹시 몰라서 추가 해뒀음)
-    //public float AimSpeed
-    //{
-    //    get => aimSpeed;
-    //    set => aimSpeed = value;
-    //}
-    //public float PowerSpeed
-    //{
-    //    get => powerSpeed;
-    //    set => powerSpeed = value;
-    //}
-
     // 외부에서 값 읽기용
     public float GetPower() => power;
     public float GetAngle() => angle;
     public string GetCurrentControlState() => currentControlState.ToString();
+
+    // 추가: 현재 파워의 노멀라이즈 값 (UI 등에서 사용 가능)
+    public float GetNormalizedPower() => (power - powerMin) / (powerMax - powerMin);
 }
