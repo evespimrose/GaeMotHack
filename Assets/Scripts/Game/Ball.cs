@@ -1,17 +1,19 @@
-using System.Diagnostics;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class Ball : MonoBehaviour
 {
     private Rigidbody2D rb;
+    [SerializeField] public float force;
+    [SerializeField] private float power;
+
 
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         if (rb == null)
         {
-            UnityEngine.Debug.LogError("Ball 오브젝트에 Rigidbody2D 컴포넌트가 없습니다.");
+            Debug.LogError("Ball 오브젝트에 Rigidbody2D 컴포넌트가 없습니다.");
         }
     }
 
@@ -21,9 +23,10 @@ public class Ball : MonoBehaviour
     public void Launch(Vector2 direction, float power)
     {
         rb.velocity = Vector2.zero; // 기존 속도 초기화
+        this.power = power;
         rb.AddForce(direction.normalized * power, ForceMode2D.Impulse);
-        UnityEngine.Debug.Log($"[Ball.Launch] 호출됨: 방향 {direction}, 파워 {power}");
-        UnityEngine.Debug.Log($"[Ball.Launch] AddForce 적용 후 velocity: {rb.velocity}");
+        Debug.Log($"[Ball.Launch] 호출됨: 방향 {direction}, 파워 {power}");
+        Debug.Log($"[Ball.Launch] AddForce 적용 후 velocity: {rb.velocity}");
     }
 
     /// <summary>
@@ -34,6 +37,11 @@ public class Ball : MonoBehaviour
         effect?.ApplyEffect(rb);
     }
 
+    private void Update()
+    {
+        force = rb.velocity.magnitude;
+    }
+
     /// <summary>
     /// 골에 도달했는지 체크하는 예시 Trigger
     /// </summary>
@@ -41,8 +49,18 @@ public class Ball : MonoBehaviour
     {
         if (other.CompareTag("Goal"))
         {
-            UnityEngine.Debug.Log("🎉 Goal Reached!");
+            Debug.Log("🎉 Goal Reached!");
             // GameManager.Instance.LevelComplete(); 등과 연동
+        }
+    }
+
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        if (collision.collider.CompareTag("Ground"))
+        {
+            // Fairway일 시 마찰력 계수 (예: 0.98f, 1에 가까울수록 천천히 감속)
+            float friction = 0.98f;
+            rb.velocity *= friction;
         }
     }
 }

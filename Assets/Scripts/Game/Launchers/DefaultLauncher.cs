@@ -22,7 +22,7 @@ public class DefaultLauncher : LauncherBase, IAimInputHandler
         base.Start();
         inputHandler = GetComponent<AimInputHandler>();
         if (inputHandler == null)
-            UnityEngine.Debug.LogError("AimInputHandler가 필요합니다.");
+            Debug.LogError("AimInputHandler가 필요합니다.");
     }
 
     private void Update()
@@ -53,7 +53,7 @@ public class DefaultLauncher : LauncherBase, IAimInputHandler
     {
         if (IsStunned()) return;
         SetAngleHandlingState(true);
-        UnityEngine.Debug.Log("각도 조절 시작");
+        Debug.Log("각도 조절 시작");
         isReadyToShoot = false;
     }
 
@@ -62,14 +62,14 @@ public class DefaultLauncher : LauncherBase, IAimInputHandler
         if (IsStunned()) return;
         SetAngleHandlingState(false);
         float angle = inputHandler.GetAngle();
-        UnityEngine.Debug.Log("각도 조절 종료, 각도: " + angle);
+        Debug.Log("각도 조절 종료, 각도: " + angle);
     }
 
     public void OnStartPowerHandling()
     {
         if (IsStunned()) return;
         SetPowerHandlingState(true);
-        UnityEngine.Debug.Log("파워 조절 시작");
+        Debug.Log("파워 조절 시작");
         isReadyToShoot = false;
     }
 
@@ -78,7 +78,7 @@ public class DefaultLauncher : LauncherBase, IAimInputHandler
         if (IsStunned()) return;
         SetPowerHandlingState(false);
         currentPower = power;
-        UnityEngine.Debug.Log("파워 조절 종료, 파워: " + currentPower);
+        Debug.Log("파워 조절 종료, 파워: " + currentPower);
         LaunchBall(inputHandler.GetAngle());
         Destroy(gameObject); // 공 발사 후 발사대(Launcher) 삭제
     }
@@ -89,31 +89,33 @@ public class DefaultLauncher : LauncherBase, IAimInputHandler
         Ball ball = instance.GetComponent<Ball>();
         if (ball == null)
         {
-            UnityEngine.Debug.LogError("Ball prefab에 Ball 컴포넌트가 없습니다.");
+            Debug.LogError("Ball prefab에 Ball 컴포넌트가 없습니다.");
             return;
         }
         float radianAngle = angle * Mathf.Deg2Rad;
         Vector2 launchDirection = new Vector2(Mathf.Cos(radianAngle), Mathf.Sin(radianAngle));
         ball.Launch(launchDirection, currentPower * launchForceMultiplier);
-        UnityEngine.Debug.Log("발사! 방향: " + launchDirection + ", 파워: " + currentPower);
+        GameManager.Instance?.RegisterBall(instance);
+        Debug.Log("발사! 방향: " + launchDirection + ", 파워: " + currentPower + "배수 : " + launchForceMultiplier);
     }
 
     public override void LaunchBallByVector(Vector2 direction, float power)
     {
         if (ballPrefab == null || currentLaunchPoint == null)
         {
-            UnityEngine.Debug.LogError("Ball 프리팹 또는 런치 포인트가 연결되지 않았습니다.");
+            Debug.LogError("Ball 프리팹 또는 런치 포인트가 연결되지 않았습니다.");
             return;
         }
         GameObject instance = Instantiate(ballPrefab, currentLaunchPoint.position, Quaternion.identity);
         Ball ball = instance.GetComponent<Ball>();
         if (ball == null)
         {
-            UnityEngine.Debug.LogError("Ball prefab에 Ball 컴포넌트가 없습니다.");
+            Debug.LogError("Ball prefab에 Ball 컴포넌트가 없습니다.");
             return;
         }
+        Debug.Log($"[Meteor 강제발사] 방향: {direction.normalized}, 파워: {power}, 배수 : {launchForceMultiplier} = {power * launchForceMultiplier}");
         ball.Launch(direction.normalized, power * launchForceMultiplier);
-        UnityEngine.Debug.Log($"[Meteor 강제발사] 방향: {direction.normalized}, 파워: {power}");
+        GameManager.Instance?.RegisterBall(instance);
         Destroy(gameObject);
     }
 }

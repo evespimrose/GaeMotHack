@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using UnityEngine;
 
 public class Meteor : MonoBehaviour
@@ -22,10 +21,10 @@ public class Meteor : MonoBehaviour
             var launcher = collision.collider.GetComponent<LauncherBase>();
             if (launcher != null)
             {
-                float stunDuration = UnityEngine.Random.Range(1.0f, 3.0f); // 1~3ÃÊ
+                float stunDuration = Random.Range(1.0f, 3.0f); // 1~3ï¿½ï¿½
                 if (launcher.IsPowerHandlingOnly())
                 {
-                    // ÆÄ¿ö Á¶Àý Áß: ¸¶Áö¸· »ç¿ëÀÚ°¡ Á¶ÁØÇÑ °¢µµ + ÇöÀç ÆÄ¿ö
+                    // ï¿½Ä¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½: ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ú°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ + ï¿½ï¿½ï¿½ï¿½ ï¿½Ä¿ï¿½
                     float curPower = 0.1f;
                     float angle = 0f;
 
@@ -40,7 +39,7 @@ public class Meteor : MonoBehaviour
                 }
                 else if (launcher.IsAngleHandlingOnly())
                 {
-                    // °¢µµ Á¶Àý Áß: ÇöÀç °¢µµ ¹æÇâ, ÆÄ¿ö 0.1
+                    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½: ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½, ï¿½Ä¿ï¿½ 0.1
                     float angle = 0f;
                     if (launcher is DefaultLauncher dl)
                         angle = dl.CurrentAngle;
@@ -50,11 +49,11 @@ public class Meteor : MonoBehaviour
                 }
                 else
                 {
-                    // µÑ ´Ù ¾Æ´Ò ¶§: ¹æÇâ¡¤ÆÄ¿ö ·£´ý
-                    float randAngle = UnityEngine.Random.Range(0f, 180f);
+                    // ï¿½ï¿½ ï¿½ï¿½ ï¿½Æ´ï¿½ ï¿½ï¿½: ï¿½ï¿½ï¿½â¡¤ï¿½Ä¿ï¿½ ï¿½ï¿½ï¿½ï¿½
+                    float randAngle = Random.Range(0f, 180f);
                     float radian = randAngle * Mathf.Deg2Rad;
                     Vector2 randomDir = new Vector2(Mathf.Cos(radian), Mathf.Sin(radian));
-                    float randPower = UnityEngine.Random.Range(0.1f, 1.0f);
+                    float randPower = Random.Range(0.1f, 1.0f);
                     launcher.StunAndForceShoot(randomDir, randPower, stunDuration);
                 }
             }

@@ -15,6 +15,11 @@ public class GameManager : Singleton<GameManager>
     // 메테오 이벤트 (위치 포함)
     public event Action<Vector3> MeteorOccurred;
 
+    [SerializeField] public GameObject CurrentBall { get; private set; }
+
+    [Header("런처 프리팹")]
+    public GameObject launcherPrefab;
+
     protected override void Awake()
     {
         base.Awake();
@@ -43,6 +48,16 @@ public class GameManager : Singleton<GameManager>
         MeteorOccurred?.Invoke(targetPos);
     }
 
+    public void RegisterBall(GameObject ball)
+    {
+        CurrentBall = ball;
+    }
+    public void UnregisterBall(GameObject ball)
+    {
+        if (CurrentBall == ball)
+            CurrentBall = null;
+    }
+
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.M))
@@ -51,6 +66,24 @@ public class GameManager : Singleton<GameManager>
             var launcher = FindObjectOfType<LauncherBase>();
             if (launcher != null)
                 InvokeMeteor(launcher.transform.position);
+        }
+        // Ball 속도 체크 및 처리
+        if (CurrentBall != null)
+        {
+            Rigidbody2D rb = CurrentBall.GetComponent<Rigidbody2D>();
+            if (rb != null && rb.velocity.magnitude <= 0.01f)
+            {
+                // Ball 위치에 Launcher 프리팹 생성 (y + 0.3f)
+                if (launcherPrefab != null)
+                {
+                    Vector3 spawnPos = CurrentBall.transform.position;
+                    spawnPos.y += 0.3f;
+                    Instantiate(launcherPrefab, spawnPos, Quaternion.identity);
+                }
+
+                Destroy(CurrentBall);
+                CurrentBall = null;
+            }
         }
     }
 }
