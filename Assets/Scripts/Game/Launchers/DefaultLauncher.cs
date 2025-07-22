@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,7 +13,7 @@ public class DefaultLauncher : LauncherBase, IAimInputHandler
     private AimInputHandler inputHandler;
     private bool isReadyToShoot = false;
 
-    // ⭐️ 현재 파워/각도 외부 제공용 프로퍼티
+    // 현재 파워/각도 외부 제공용 프로퍼티
     public float CurrentPower => currentPower;
     public float CurrentAngle => inputHandler != null ? inputHandler.GetAngle() : 0f;
 
@@ -28,6 +27,9 @@ public class DefaultLauncher : LauncherBase, IAimInputHandler
 
     private void Update()
     {
+        // ⭐️ 기절 상태일 땐 입력/업데이트 등 전부 동작 정지
+        if (IsStunned()) return;
+
         if (GetPowerHandlingState() && inputHandler != null)
             currentPower = inputHandler.GetPower();
 
@@ -46,9 +48,10 @@ public class DefaultLauncher : LauncherBase, IAimInputHandler
         aimPanel.gameObject.SetActive(active);
     }
 
-    // IAimInputHandler 구현부
+    // IAimInputHandler 구현부는 그대로
     public void OnStartAiming(Vector2 position)
     {
+        if (IsStunned()) return;
         SetAngleHandlingState(true);
         UnityEngine.Debug.Log("각도 조절 시작");
         isReadyToShoot = false;
@@ -56,14 +59,15 @@ public class DefaultLauncher : LauncherBase, IAimInputHandler
 
     public void OnEndAiming(Vector2 position)
     {
+        if (IsStunned()) return;
         SetAngleHandlingState(false);
         float angle = inputHandler.GetAngle();
         UnityEngine.Debug.Log("각도 조절 종료, 각도: " + angle);
-        // 파워 조절 시작은 AimInputHandler에서 handler.OnStartPowerHandling()로 자동 호출됨
     }
 
     public void OnStartPowerHandling()
     {
+        if (IsStunned()) return;
         SetPowerHandlingState(true);
         UnityEngine.Debug.Log("파워 조절 시작");
         isReadyToShoot = false;
@@ -71,6 +75,7 @@ public class DefaultLauncher : LauncherBase, IAimInputHandler
 
     public void OnEndPowerHandling(float power)
     {
+        if (IsStunned()) return;
         SetPowerHandlingState(false);
         currentPower = power;
         UnityEngine.Debug.Log("파워 조절 종료, 파워: " + currentPower);
@@ -93,7 +98,6 @@ public class DefaultLauncher : LauncherBase, IAimInputHandler
         UnityEngine.Debug.Log("발사! 방향: " + launchDirection + ", 파워: " + currentPower);
     }
 
-    // ⭐️ Meteor 충돌 등에서 방향/파워 직접 지정 강제발사
     public override void LaunchBallByVector(Vector2 direction, float power)
     {
         if (ballPrefab == null || currentLaunchPoint == null)
@@ -110,7 +114,6 @@ public class DefaultLauncher : LauncherBase, IAimInputHandler
         }
         ball.Launch(direction.normalized, power * launchForceMultiplier);
         UnityEngine.Debug.Log($"[Meteor 강제발사] 방향: {direction.normalized}, 파워: {power}");
-        Destroy(gameObject); // 반드시 마지막에!
+        Destroy(gameObject);
     }
-
 }

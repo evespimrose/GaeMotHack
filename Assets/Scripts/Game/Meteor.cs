@@ -22,6 +22,7 @@ public class Meteor : MonoBehaviour
             var launcher = collision.collider.GetComponent<LauncherBase>();
             if (launcher != null)
             {
+                float stunDuration = UnityEngine.Random.Range(1.0f, 3.0f); // 1~3초
                 if (launcher.IsPowerHandlingOnly())
                 {
                     // 파워 조절 중: 마지막 사용자가 조준한 각도 + 현재 파워
@@ -35,8 +36,7 @@ public class Meteor : MonoBehaviour
                     }
                     float rad = angle * Mathf.Deg2Rad;
                     Vector2 dir = new Vector2(Mathf.Cos(rad), Mathf.Sin(rad));
-
-                    launcher.StunAndForceShoot(dir, curPower);
+                    launcher.StunAndForceShoot(dir, curPower, stunDuration);
                 }
                 else if (launcher.IsAngleHandlingOnly())
                 {
@@ -46,16 +46,16 @@ public class Meteor : MonoBehaviour
                         angle = dl.CurrentAngle;
                     float rad = angle * Mathf.Deg2Rad;
                     Vector2 dir = new Vector2(Mathf.Cos(rad), Mathf.Sin(rad));
-                    launcher.StunAndForceShoot(dir, 0.1f);
+                    launcher.StunAndForceShoot(dir, 0.1f, stunDuration);
                 }
                 else
                 {
-                    // 둘 다 아님: 방향·파워 랜덤
+                    // 둘 다 아닐 때: 방향·파워 랜덤
                     float randAngle = UnityEngine.Random.Range(0f, 180f);
                     float radian = randAngle * Mathf.Deg2Rad;
                     Vector2 randomDir = new Vector2(Mathf.Cos(radian), Mathf.Sin(radian));
                     float randPower = UnityEngine.Random.Range(0.1f, 1.0f);
-                    launcher.StunAndForceShoot(randomDir, randPower);
+                    launcher.StunAndForceShoot(randomDir, randPower, stunDuration);
                 }
             }
             Destroy(gameObject);

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-// 싱글턴 구조 예시 (최소 구현)
+// 싱글턴 구조
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
@@ -11,7 +11,7 @@ public class GameManager : MonoBehaviour
     public event System.Action GameEnded;
 
     // 2. Meteor(유성) 발생 이벤트
-    public event System.Action<Vector3> MeteorOccurred; // <--- Meteor 생성 위치 등 전달 가능
+    public event System.Action<Vector3> MeteorOccurred; // Meteor 생성 위치 전달
 
     private void Awake()
     {
