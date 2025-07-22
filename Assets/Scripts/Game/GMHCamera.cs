@@ -42,6 +42,8 @@ public class GMHCamera : MonoBehaviour
 
     public void SetZoomOut(bool zoomOut)
     {
+        Debug.Log($"SetZoomOut : {zoomOut}");
+
         if (zoomOut && !isZoomedOut)
         {
             cam.orthographicSize = zoomOutSize;
