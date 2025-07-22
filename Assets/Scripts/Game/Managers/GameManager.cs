@@ -1,22 +1,34 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
-// 싱글턴 구조
-public class GameManager : MonoBehaviour
+public class GameManager : Singleton<GameManager>
 {
-    public static GameManager Instance { get; private set; }
+    [SerializeField] private int currentLevel = 1;
+    [SerializeField] private int topLevel = 0;
 
-    // 1. 골 도달 이벤트
-    public event System.Action GameEnded;
+    public int TopLevel() => topLevel;
 
-    // 2. Meteor(유성) 발생 이벤트
-    public event System.Action<Vector3> MeteorOccurred; // Meteor 생성 위치 전달
+    // 골 도달 이벤트
+    public event Action GameEnded;
 
-    private void Awake()
+    // 메테오 이벤트 (위치 포함)
+    public event Action<Vector3> MeteorOccurred;
+
+    protected override void Awake()
     {
-        if (Instance == null) Instance = this;
-        else Destroy(gameObject);
+        base.Awake();
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDestroy()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        // 필요 시 로딩 시 처리할 로직 작성
     }
 
     // 게임 종료 이벤트 호출
@@ -25,7 +37,7 @@ public class GameManager : MonoBehaviour
         GameEnded?.Invoke();
     }
 
-    // Meteo 이벤트 호출, 호출 위치로부터 발사
+    // 메테오 이벤트 호출 (위치 기반)
     public void InvokeMeteor(Vector3 targetPos)
     {
         MeteorOccurred?.Invoke(targetPos);
@@ -35,7 +47,7 @@ public class GameManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.M))
         {
-            // 예시: Launcher 위치로 떨어트림
+            // Launcher 위치 기준으로 메테오 발생
             var launcher = FindObjectOfType<LauncherBase>();
             if (launcher != null)
                 InvokeMeteor(launcher.transform.position);
