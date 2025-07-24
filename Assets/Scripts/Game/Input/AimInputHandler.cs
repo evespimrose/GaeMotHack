@@ -75,7 +75,7 @@ public class AimInputHandler : MonoBehaviour
 
         if (currentControlState == ControlState.Power && hasReachedMax && hasReachedMin)
         {
-            float finalPower = powerMin;
+            float finalPower = minimumPower;
             handler.OnEndPowerHandling(finalPower);
             ResetControlState();
         }

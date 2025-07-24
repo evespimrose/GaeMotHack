@@ -14,6 +14,8 @@ public class GameManager : Singleton<GameManager>
 
     // 메테오 이벤트 (위치 포함)
     public event Action<Vector3> MeteorOccurred;
+    // 새 소환 위치 기반 이벤트
+    public event Action<Vector3> BirdSpawnOccurred; 
 
     [SerializeField] public GameObject CurrentBall { get; private set; }
 
@@ -60,6 +62,11 @@ public class GameManager : Singleton<GameManager>
     {
         MeteorOccurred?.Invoke(targetPos);
     }
+    // 새(Bird) 소환 이벤트 호출
+    public void InvokeBirdSpawn(Vector3 targetPos)
+    {
+        BirdSpawnOccurred?.Invoke(targetPos);
+    }
 
     public void RegisterBall(GameObject ball)
     {
@@ -85,6 +92,13 @@ public class GameManager : Singleton<GameManager>
             var launcher = FindObjectOfType<LauncherBase>();
             if (launcher != null)
                 InvokeMeteor(launcher.transform.position);
+        }
+
+        if (Input.GetKeyDown(KeyCode.B))
+        {
+            var launcher = FindObjectOfType<LauncherBase>();
+            if (launcher != null)
+                InvokeBirdSpawn(launcher.transform.position);
         }
         // Ball 속도 체크 및 처리
         if (CurrentBall != null)
