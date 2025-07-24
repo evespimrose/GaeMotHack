@@ -10,7 +10,7 @@ public class GameManager : Singleton<GameManager>
     public int TopLevel() => topLevel;
 
     // 골 도달 이벤트
-    public event Action GameEnded;
+    public event Action GameCleared;
 
     // 메테오 이벤트 (위치 포함)
     public event Action<Vector3> MeteorOccurred;
@@ -19,6 +19,10 @@ public class GameManager : Singleton<GameManager>
 
     [Header("런처 프리팹")]
     public GameObject launcherPrefab;
+
+    private ClearUI clearUI;
+
+    public Camera GMHCamera;
 
     protected override void Awake()
     {
@@ -34,12 +38,21 @@ public class GameManager : Singleton<GameManager>
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         // 필요 시 로딩 시 처리할 로직 작성
+        GameCleared += () =>
+        {
+            if (topLevel < currentLevel)
+                topLevel++;
+
+            if (clearUI != null) clearUI.gameObject.SetActive(true);
+
+            clearUI.ShowResult(true);
+        };
     }
 
     // 게임 종료 이벤트 호출
     public void InvokeGameEnd()
     {
-        GameEnded?.Invoke();
+        GameCleared?.Invoke();
     }
 
     // 메테오 이벤트 호출 (위치 기반)
@@ -52,10 +65,16 @@ public class GameManager : Singleton<GameManager>
     {
         CurrentBall = ball;
     }
+
     public void UnregisterBall(GameObject ball)
     {
         if (CurrentBall == ball)
             CurrentBall = null;
+    }
+
+    public void SetLevel(int level)
+    {
+        currentLevel = level;
     }
 
     private void Update()
@@ -78,7 +97,11 @@ public class GameManager : Singleton<GameManager>
                 {
                     Vector3 spawnPos = CurrentBall.transform.position;
                     spawnPos.y += 0.3f;
-                    Instantiate(launcherPrefab, spawnPos, Quaternion.identity);
+                    var launcherObj = Instantiate(launcherPrefab, spawnPos, Quaternion.identity);
+                    if (launcherObj.TryGetComponent<DefaultLauncher>(out var defaultLauncher))
+                    {
+                        defaultLauncher.SetPowerCanvasCamera(GMHCamera);
+                    }
                 }
 
                 Destroy(CurrentBall);
