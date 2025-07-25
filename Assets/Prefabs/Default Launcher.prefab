@@ -174,9 +174,10 @@ GameObject:
   - component: {fileID: 8498221176106149415}
   - component: {fileID: 1921989799268580257}
   - component: {fileID: 526151250441776726}
+  - component: {fileID: 6101995470640679628}
   m_Layer: 0
   m_Name: Default Launcher
-  m_TagString: Untagged
+  m_TagString: Launcher
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -271,6 +272,7 @@ MonoBehaviour:
   aimPanel: {fileID: 6486745280269415745}
   currentPower: 0
   currentAimAngle: 0
+  powerCanvas: {fileID: 6549411144268940292}
 --- !u!114 &526151250441776726
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -283,11 +285,60 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3e1bf74ac59765c4caad2126c5ed0bb6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  powerMin: 0
+  powerMax: 1
+  aimSpeed: 120
+  powerSpeed: 1
   badRangeMin: 0
   badRangeMax: 0.3
   goodRangeMin: 0.5
   goodRangeMax: 0.5
   minimumPower: 0.1
+--- !u!61 &6101995470640679628
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1922006931136442159}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1, y: 1}
+    newSize: {x: 1, y: 1}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1}
+  m_EdgeRadius: 0
 --- !u!1 &2716496641492196128
 GameObject:
   m_ObjectHideFlags: 0
@@ -474,8 +525,8 @@ RectTransform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4953594210944193295}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 90}
+  m_LocalScale: {x: 0.00925926, y: 0.00925926, z: 0.00925926}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3406406777005154890}
@@ -483,9 +534,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
-  m_Pivot: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0.5}
+  m_SizeDelta: {x: 1920.0001, y: 1080}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &6549411144268940292
 Canvas:
   m_ObjectHideFlags: 0
@@ -495,7 +546,7 @@ Canvas:
   m_GameObject: {fileID: 4953594210944193295}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 1
+  m_RenderMode: 2
   m_Camera: {fileID: 0}
   m_PlaneDistance: 100
   m_PixelPerfect: 0
@@ -531,7 +582,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 0
+  m_PresetInfoIsWorld: 1
 --- !u!114 &487013962384318182
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -13,7 +13,7 @@ public class DefaultLauncher : LauncherBase, IAimInputHandler
     private AimInputHandler inputHandler;
     private bool isReadyToShoot = false;
 
-    private Canvas powerCanvas;
+    [SerializeField] private Canvas powerCanvas;
 
     // 현재 파워/각도 외부 제공용 프로퍼티
     public float CurrentPower => currentPower;
@@ -126,9 +126,10 @@ public class DefaultLauncher : LauncherBase, IAimInputHandler
     {
         if (powerCanvas == null)
             powerCanvas = GetComponentInChildren<Canvas>();
-        if (powerCanvas != null && powerCanvas.renderMode == RenderMode.WorldSpace)
+        if (powerCanvas != null && powerCanvas.renderMode == RenderMode.ScreenSpaceCamera)
         {
             powerCanvas.worldCamera = cam;
+            Debug.Log($"powerCanvas.worldCamera : {powerCanvas.worldCamera.name}, cam : {cam.name}");
         }
     }
 }
