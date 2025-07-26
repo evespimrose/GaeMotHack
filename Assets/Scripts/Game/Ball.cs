@@ -50,7 +50,19 @@ public class Ball : MonoBehaviour
         if (other.CompareTag("Goal"))
         {
             Debug.Log("🎉 Goal Reached!");
-            // GameManager.Instance.LevelComplete(); 등과 연동
+            GameManager.Instance.StageComplete();
+        }
+        
+        if (other.CompareTag("TrapGoal"))
+        {
+            Debug.Log("TrapGoal에 닿음!");
+            if (rb.velocity.sqrMagnitude > 0.01f)
+            {
+                Vector2 bounceDir = -rb.velocity.normalized;
+                float bouncePower = 20f; // 강한 힘
+                rb.velocity = Vector2.zero; // 기존 속도 초기화
+                rb.AddForce(bounceDir * bouncePower, ForceMode2D.Impulse);
+            }
         }
     }
 

@@ -52,7 +52,7 @@ public class GameManager : Singleton<GameManager>
     }
 
     // 게임 종료 이벤트 호출
-    public void InvokeGameEnd()
+    public void StageComplete()
     {
         GameCleared?.Invoke();
     }
