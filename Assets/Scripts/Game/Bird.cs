@@ -4,6 +4,9 @@ public class Bird : MonoBehaviour
 {
     private Rigidbody2D rb;
     private bool isFalling = false;
+    private bool isChasing = false;
+    private Transform targetBall;
+    [SerializeField] private GameObject Redeye;
 
     void Awake()
     {
@@ -12,32 +15,63 @@ public class Bird : MonoBehaviour
     }
     void Start()
     {
-        // ¿À¸¥ÂÊ(x=1)À¸·Î ¼Óµµ 5 ÁÖ±â
-        rb.velocity = new Vector2(5f, 0f);  // ¿ŞÂÊ: rb.velocity = new Vector2(-5f, 0f);
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(x=1)ï¿½ï¿½ï¿½ï¿½ ï¿½Óµï¿½ 5 ï¿½Ö±ï¿½
+        rb.velocity = new Vector2(5f, 0f);  // ï¿½ï¿½ï¿½ï¿½: rb.velocity = new Vector2(-5f, 0f);
     }
     void Update()
     {
-        // ¾Æ·¡·Î ³«ÇÏ Áß && ÃæºĞÈ÷ ¾Æ·¡·Î ¶³¾îÁö¸é »èÁ¦
+        // ì¶”ì  ìƒíƒœë©´ íƒ€ê²Ÿì„ í–¥í•´ ëŒì§„
+        if (isChasing && targetBall != null && !isFalling)
+        {
+            Vector2 dir = (targetBall.position - transform.position).normalized;
+            float chaseSpeed = 8f; // ì¶”ì  ì†ë„ ì¡°ì ˆ
+            rb.velocity = dir * chaseSpeed;
+        }
+        // ë‚™í•˜ ìƒíƒœì—ì„œ yê°€ ì¶©ë¶„íˆ ë‚®ì•„ì§€ë©´ íŒŒê´´
         if (isFalling && transform.position.y < -10f)
         {
             Destroy(gameObject);
         }
+        // Redeye í™œì„±í™”/ë¹„í™œì„±í™”
+        if (Redeye != null)
+            Redeye.SetActive(isChasing);
     }
-    
 
+    // ê°ì§€ìš© íŠ¸ë¦¬ê±° ì½œë¼ì´ë”ì—ì„œ ì²˜ë¦¬
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (!isChasing && !isFalling && other.CompareTag("Ball"))
+        {
+            isChasing = true;
+            targetBall = other.transform;
+        }
+    }
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if (isChasing && other.transform == targetBall)
+        {
+            isChasing = false;
+            targetBall = null;
+        }
+    }
+
+    // ì¶©ëŒìš© ë°•ìŠ¤ ì½œë¼ì´ë”ì—ì„œ ì²˜ë¦¬
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (!isFalling && collision.gameObject.CompareTag("Boal"))
+        if (!isFalling && collision.gameObject.CompareTag("Ball"))
         {
-            // Ãæµ¹ ½Ã ¼öÁ÷ ³«ÇÏ
+            // ì¶”ì  ì¢…ë£Œ, ë‚™í•˜ ì‹œì‘
+            isChasing = false;
             isFalling = true;
+            targetBall = null;
             rb.velocity = Vector2.down * 5f;
             rb.gravityScale = 2f;
-            UnityEngine.Debug.Log("Bird°¡ Ball°ú Ãæµ¹ ¡æ ¾Æ·¡·Î ³«ÇÏ!");
-
+            UnityEngine.Debug.Log("Birdê°€ Ballê³¼ ì¶©ëŒ í›„ ì•„ë˜ë¡œ ë‚™í•˜!");
             Collider2D myCol = GetComponent<Collider2D>();
             if (myCol != null)
                 myCol.enabled = false;
+            if (Redeye != null)
+                Redeye.SetActive(false);
         }
     }
 }
