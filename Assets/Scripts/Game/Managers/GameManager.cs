@@ -115,6 +115,13 @@ public class GameManager : Singleton<GameManager>
                     if (launcherObj.TryGetComponent<DefaultLauncher>(out var defaultLauncher))
                     {
                         defaultLauncher.SetPowerCanvasCamera(GMHCamera);
+                        // 50% 확률로 파워 속도 랜덤 설정
+                        if (Random.value < 0.5f)
+                        {
+                            var aimInput = launcherObj.GetComponent<AimInputHandler>();
+                            if (aimInput != null)
+                                aimInput.SetPowerSpeed(Random.Range(0.2f, 3.0f));
+                        }
                     }
                 }
 
