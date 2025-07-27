@@ -64,6 +64,14 @@ public class Ball : MonoBehaviour
                 rb.AddForce(bounceDir * bouncePower, ForceMode2D.Impulse);
             }
         }
+
+        if (other.CompareTag("FakeGoal"))
+        {
+            if (other.TryGetComponent<FakeGoal>(out var fakeGoal))
+            {
+                fakeGoal.TrollMove();
+            }
+        }
     }
 
     private void OnCollisionStay2D(Collision2D collision)
