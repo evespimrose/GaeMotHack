@@ -68,11 +68,22 @@ public class Ball : MonoBehaviour
 
     private void OnCollisionStay2D(Collision2D collision)
     {
-        if (collision.collider.CompareTag("Ground"))
+        if (isGround(collision))
         {
             // Fairway일 시 마찰력 계수 (예: 0.98f, 1에 가까울수록 천천히 감속)
             float friction = 0.98f;
             rb.velocity *= friction;
         }
     }
+
+    /// <summary>
+    /// 해당 충돌이 골프장 지면(Fairway, Rough, Hezard, Buncker)인지 판별
+    /// </summary>
+    private bool isGround(Collision2D collision)
+    {
+        string tag = collision.collider.tag;
+        return tag == "Fairway" || tag == "Rough" || tag == "Hezard" || tag == "Buncker";
+    }
+
+
 }

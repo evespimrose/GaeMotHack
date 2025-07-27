@@ -8,6 +8,8 @@ public class Bird : MonoBehaviour
     private Transform targetBall;
     [SerializeField] private GameObject Redeye;
 
+    public bool isRed;
+
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -20,8 +22,8 @@ public class Bird : MonoBehaviour
     }
     void Update()
     {
-        // 추적 상태면 타겟을 향해 돌진
-        if (isChasing && targetBall != null && !isFalling)
+        // 추적 상태면 타겟을 향해 돌진 (isRed일 때만)
+        if (isRed && isChasing && targetBall != null && !isFalling)
         {
             Vector2 dir = (targetBall.position - transform.position).normalized;
             float chaseSpeed = 8f; // 추적 속도 조절
@@ -37,13 +39,13 @@ public class Bird : MonoBehaviour
         }
         // Redeye 활성화/비활성화
         if (Redeye != null)
-            Redeye.SetActive(isChasing);
+            Redeye.SetActive(isChasing && isRed);
     }
 
     // 감지용 트리거 콜라이더에서 처리
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (!isChasing && !isFalling && other.CompareTag("Ball"))
+        if (isRed && !isChasing && !isFalling && other.CompareTag("Ball"))
         {
             isChasing = true;
             targetBall = other.transform;
@@ -51,7 +53,7 @@ public class Bird : MonoBehaviour
     }
     private void OnTriggerExit2D(Collider2D other)
     {
-        if (isChasing && other.transform == targetBall)
+        if (isRed && isChasing && other.transform == targetBall)
         {
             isChasing = false;
             targetBall = null;

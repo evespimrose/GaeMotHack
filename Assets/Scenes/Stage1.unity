@@ -538,37 +538,9 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 2364486331832563543, guid: f6f28fbde3f0a444babd98caa012dfe9, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 1.93
-      objectReference: {fileID: 0}
     - target: {fileID: 3688967097653722080, guid: f6f28fbde3f0a444babd98caa012dfe9, type: 3}
       propertyPath: m_Name
       value: Birdd
-      objectReference: {fileID: 0}
-    - target: {fileID: 4218248601950621797, guid: f6f28fbde3f0a444babd98caa012dfe9, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0.27
-      objectReference: {fileID: 0}
-    - target: {fileID: 5311343135435792446, guid: f6f28fbde3f0a444babd98caa012dfe9, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6946004214249833887, guid: f6f28fbde3f0a444babd98caa012dfe9, type: 3}
-      propertyPath: Redeye
-      value: 
-      objectReference: {fileID: 1575582093}
-    - target: {fileID: 7568174574309248611, guid: f6f28fbde3f0a444babd98caa012dfe9, type: 3}
-      propertyPath: m_FlipX
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7568174574309248611, guid: f6f28fbde3f0a444babd98caa012dfe9, type: 3}
-      propertyPath: m_FlipY
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7674898113229315680, guid: f6f28fbde3f0a444babd98caa012dfe9, type: 3}
-      propertyPath: m_FlipX
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7685489002904726565, guid: f6f28fbde3f0a444babd98caa012dfe9, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1381,7 +1353,7 @@ GameObject:
   - component: {fileID: 798410983}
   - component: {fileID: 798410982}
   - component: {fileID: 798410981}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Rough
   m_TagString: Rough
   m_Icon: {fileID: 0}
@@ -2185,7 +2157,7 @@ GameObject:
   - component: {fileID: 1199889216}
   - component: {fileID: 1199889215}
   - component: {fileID: 1199889214}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Fairway
   m_TagString: Fairway
   m_Icon: {fileID: 0}
@@ -11744,7 +11716,7 @@ GameObject:
   - component: {fileID: 1310566332}
   - component: {fileID: 1310566331}
   - component: {fileID: 1310566330}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Buncker
   m_TagString: Buncker
   m_Icon: {fileID: 0}
@@ -12313,11 +12285,6 @@ Transform:
   - {fileID: 5976457}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1575582093 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5311343135435792446, guid: f6f28fbde3f0a444babd98caa012dfe9, type: 3}
-  m_PrefabInstance: {fileID: 289831942}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2035932936
 GameObject:
   m_ObjectHideFlags: 0
@@ -12381,7 +12348,7 @@ GameObject:
   - component: {fileID: 2072928806}
   - component: {fileID: 2072928805}
   - component: {fileID: 2072928804}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Hezard
   m_TagString: Hezard
   m_Icon: {fileID: 0}

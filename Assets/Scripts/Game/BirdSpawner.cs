@@ -2,20 +2,20 @@ using UnityEngine;
 
 public class BirdSpawner : MonoBehaviour
 {
-    [Header("Bird ÇÁ¸®ÆÕ")]
+    [Header("Bird ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½")]
     public GameObject birdPrefab;
 
-    [Header("½ºÆù À§Ä¡(¸Ê ¹Û)")]
-    public float spawnX = 12f; // ÇöÀç´Â ¹ß»ç´ë ½ÃÀÛ À§Ä¡º¸´Ù ¿ŞÂÊ
-    public Vector2 spawnYRange = new Vector2(-2f, 5f); // ·£´ı ½ºÆù ¿µ¿ª(y)
+    [Header("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡(ï¿½ï¿½ ï¿½ï¿½)")]
+    public float spawnX = 12f; // ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß»ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+    public Vector2 spawnYRange = new Vector2(-2f, 5f); // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(y)
 
-    [Header("ÀÌµ¿ ¼Óµµ/¹æÇâ")]
+    [Header("ï¿½Ìµï¿½ ï¿½Óµï¿½/ï¿½ï¿½ï¿½ï¿½")]
     public Vector2 flyDirection = Vector2.right;
     public float flySpeed = 4f;
 
     void Update()
     {
-        // BÅ° ´©¸¦ ¶§ »õ »ı¼º
+        // BÅ° ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         if (Input.GetKeyDown(KeyCode.B))
         {
             SpawnBird();
@@ -26,7 +26,7 @@ public class BirdSpawner : MonoBehaviour
     {
         if (birdPrefab == null)
         {
-            UnityEngine.Debug.LogWarning("Bird ÇÁ¸®ÆÕÀÌ ¿¬°áµÇ¾î ÀÖÁö ¾Ê½À´Ï´Ù!");
+            UnityEngine.Debug.LogWarning("Bird ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ç¾ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ê½ï¿½ï¿½Ï´ï¿½!");
             return;
         }
         float randY = Random.Range(spawnYRange.x, spawnYRange.y);
@@ -40,7 +40,13 @@ public class BirdSpawner : MonoBehaviour
         }
         else
         {
-            UnityEngine.Debug.LogWarning("Bird¿¡ Rigidbody2D°¡ ¾ø½À´Ï´Ù!");
+            UnityEngine.Debug.LogWarning("Birdì— Rigidbody2Dê°€ ì—†ìŠµë‹ˆë‹¤!");
+        }
+        // isRed 20% í™•ë¥ ë¡œ true
+        var birdScript = bird.GetComponent<Bird>();
+        if (birdScript != null)
+        {
+            birdScript.isRed = (Random.value < 0.2f);
         }
     }
 }
