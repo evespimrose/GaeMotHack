@@ -9,6 +9,11 @@ TagManager:
   - Ground
   - Launcher
   - TrapGoal
+  - FakeGoal
+  - Fairway
+  - Rough
+  - Buncker
+  - Hezard
   layers:
   - Default
   - TransparentFX
