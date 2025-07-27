@@ -59,7 +59,7 @@ public class Ball : MonoBehaviour
             if (rb.velocity.sqrMagnitude > 0.01f)
             {
                 Vector2 bounceDir = -rb.velocity.normalized;
-                float bouncePower = 20f; // 강한 힘
+                float bouncePower = 5f; // 강한 힘
                 rb.velocity = Vector2.zero; // 기존 속도 초기화
                 rb.AddForce(bounceDir * bouncePower, ForceMode2D.Impulse);
             }

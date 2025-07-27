@@ -26,6 +26,9 @@ public class Bird : MonoBehaviour
             Vector2 dir = (targetBall.position - transform.position).normalized;
             float chaseSpeed = 8f; // 추적 속도 조절
             rb.velocity = dir * chaseSpeed;
+            // 시선(오브젝트 방향)도 타겟을 바라보게
+            float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+            transform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
         }
         // 낙하 상태에서 y가 충분히 낮아지면 파괴
         if (isFalling && transform.position.y < -10f)
@@ -60,6 +63,13 @@ public class Bird : MonoBehaviour
     {
         if (!isFalling && collision.gameObject.CompareTag("Ball"))
         {
+            // 충돌한 방향 계산
+            Rigidbody2D ballRb = collision.gameObject.GetComponent<Rigidbody2D>();
+            if (ballRb != null)
+            {
+                Vector2 hitDir = (collision.gameObject.transform.position - transform.position).normalized;
+                ballRb.AddForce(hitDir * 2f, ForceMode2D.Impulse);
+            }
             // 추적 종료, 낙하 시작
             isChasing = false;
             isFalling = true;

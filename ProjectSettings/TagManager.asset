@@ -5,7 +5,6 @@ TagManager:
   serializedVersion: 2
   tags:
   - Goal
-  - Boal
   - Ground
   - Launcher
   - TrapGoal
@@ -14,6 +13,7 @@ TagManager:
   - Rough
   - Buncker
   - Hezard
+  - Ball
   layers:
   - Default
   - TransparentFX
