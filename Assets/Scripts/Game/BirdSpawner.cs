@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class BirdSpawner : MonoBehaviour
@@ -13,6 +14,11 @@ public class BirdSpawner : MonoBehaviour
     public Vector2 flyDirection = Vector2.right;
     public float flySpeed = 4f;
 
+    private void Awake()
+    {
+        StartCoroutine(SpawnCourutine());
+    }
+
     void Update()
     {
         // BŰ ���� �� �� ����
@@ -20,6 +26,12 @@ public class BirdSpawner : MonoBehaviour
         {
             SpawnBird();
         }
+    }
+
+    private IEnumerator SpawnCourutine()
+    {
+        yield return new WaitForSeconds(3f);
+        SpawnBird();
     }
 
     public void SpawnBird()

@@ -1,6 +1,10 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.IO;
+using Random = UnityEngine.Random;
 
 public class GameManager : Singleton<GameManager>
 {
@@ -22,14 +26,40 @@ public class GameManager : Singleton<GameManager>
     [Header("런처 프리팹")]
     public GameObject launcherPrefab;
 
-    private ClearUI clearUI;
+    [SerializeField] private ClearUI clearUI;
 
     public Camera GMHCamera;
+
+    // 1. 전역 컨테이너 선언
+    public static HashSet<string> stageSceneNames = new HashSet<string>();
 
     protected override void Awake()
     {
         base.Awake();
+        // 2. 빌드에 포함된 Stage 씬 이름을 컨테이너에 등록
+        RegisterStageScenes();
         SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    // 3. Stage 씬 자동 등록 메소드
+    private void RegisterStageScenes()
+    {
+        stageSceneNames.Clear();
+        int sceneCount = SceneManager.sceneCountInBuildSettings;
+        for (int i = 0; i < sceneCount; i++)
+        {
+            string path = SceneUtility.GetScenePathByBuildIndex(i);
+            string sceneName = Path.GetFileNameWithoutExtension(path);
+            // "Stage" + 정수 형태 검사
+            if (sceneName.StartsWith("Stage"))
+            {
+                string numberPart = sceneName.Substring("Stage".Length);
+                if (int.TryParse(numberPart, out _))
+                {
+                    stageSceneNames.Add(sceneName);
+                }
+            }
+        }
     }
 
     private void OnDestroy()
@@ -39,17 +69,28 @@ public class GameManager : Singleton<GameManager>
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        // 필요 시 로딩 시 처리할 로직 작성
-        GameCleared += () =>
+        if (stageSceneNames.Contains(scene.name))
         {
-            if (topLevel < currentLevel)
-                topLevel++;
+            Debug.Log($"{scene.name} OnSceneLoaded!!!");
 
-            if (clearUI != null) clearUI.gameObject.SetActive(true);
+            clearUI = FindObjectOfType<ClearUI>();
 
-            clearUI.ShowResult(true);
-        };
+            // 필요 시 로딩 시 처리할 로직 작성
+            GameCleared += () =>
+            {
+                if (topLevel < currentLevel)
+                    topLevel++;
+
+                if (clearUI != null) clearUI.gameObject.SetActive(true);
+
+                clearUI.ShowResult(true);
+            };
+
+            clearUI.gameObject.SetActive(false);
+        }
     }
+
+
 
     // 게임 종료 이벤트 호출
     public void StageComplete()

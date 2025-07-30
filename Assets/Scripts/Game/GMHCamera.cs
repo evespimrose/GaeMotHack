@@ -36,7 +36,8 @@ public class GMHCamera : MonoBehaviour
         {
             Vector3 targetPos = target.position;
             targetPos.z = transform.position.z;
-            transform.position = Vector3.Lerp(transform.position, targetPos, followSpeed * Time.deltaTime);
+            // 바로 위치 이동 (Lerp 제거)
+            transform.position = targetPos;
         }
     }
 

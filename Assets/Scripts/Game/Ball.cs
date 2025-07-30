@@ -67,7 +67,8 @@ public class Ball : MonoBehaviour
 
         if (other.CompareTag("FakeGoal"))
         {
-            if (other.TryGetComponent<FakeGoal>(out var fakeGoal))
+            var fakeGoal = other.GetComponentInChildren<FakeGoal>();
+            if (fakeGoal != null)
             {
                 fakeGoal.TrollMove();
             }

@@ -481,7 +481,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentLevel: 1
   topLevel: 0
-  launcherPrefab: {fileID: 0}
+  launcherPrefab: {fileID: 1922006931136442159, guid: 996057349b9c0d54e844f7dd30639b0e, type: 3}
+  clearUI: {fileID: 0}
   GMHCamera: {fileID: 0}
 --- !u!4 &659402876
 Transform:
@@ -535,8 +536,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 160, y: 30}
+  m_AnchoredPosition: {x: -11.0232, y: -37.4789}
+  m_SizeDelta: {x: 301.0967, y: 195.3479}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &880908943
 MonoBehaviour:
